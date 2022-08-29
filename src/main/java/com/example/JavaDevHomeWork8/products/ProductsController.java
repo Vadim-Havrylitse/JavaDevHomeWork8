@@ -1,54 +1,111 @@
 package com.example.JavaDevHomeWork8.products;
 
-import com.example.JavaDevHomeWork8.manufacturers.ManufacturerRepo;
-import com.example.JavaDevHomeWork8.manufacturers.ManufacturerService;
-import com.example.JavaDevHomeWork8.manufacturers.Manufacturers;
-import com.example.JavaDevHomeWork8.products.dto.ProductPrintDto;
+import com.example.JavaDevHomeWork8.manufacturers.dto.ManufacturersDto;
+import com.example.JavaDevHomeWork8.manufacturers.dao.ManufacturersService;
+import com.example.JavaDevHomeWork8.products.dao.ProductsService;
+import com.example.JavaDevHomeWork8.products.dto.ProductsDto;
+import com.example.JavaDevHomeWork8.products.entity.Products;
+import com.example.JavaDevHomeWork8.util.err.EntityNoExist;
+import com.example.JavaDevHomeWork8.util.err.EntityWithDuplicateData;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
+@RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductsController {
     private final ProductsService productsService;
-    private final ProductsRepo productsRepo;
-    private final ManufacturerRepo manufacturerRepo;
+    private final ManufacturersService manufacturersService;
 
-    @GetMapping(value = "/products")
-    private String getProducts(Model model){
 
-        setDB();
-
-        List<Products> products = productsService.getAll();
-        System.out.println("PRINT productsService.getAll()");
-        products.forEach(System.out::println);
-        List<ProductPrintDto> productPrintDtos = productsService.toDTO(products);
-        System.out.println("PRINT productsService.toDTO(products)");
-        productPrintDtos.forEach(System.out::println);
-        System.out.println("ADD TO HTML!!!!!");
-        model.addAttribute("products", productPrintDtos);
+    @GetMapping("")
+    public String getProducts(Model model){
+        fillModelForMainPage(model);
         return "products-main";
     }
 
-    private void setDB(){
-        for(int i=0; i<5; i++){
-            Manufacturers save = manufacturerRepo.save(Manufacturers.builder()
-                    .name("ManufacturersTestName " + i)
-                    .products(null)
-                    .build());
-            System.out.println(save);
-            Products save1 = productsRepo.save(Products.builder()
-                    .name("ProductTestName " + i)
-                    .manufacturer(save)
-                    .price(123L)
-                    .build());
-            System.out.println(save1);
+    private void fillModelForMainPage(Model model) {
+        List<Products> products = productsService.getAll();
+        List<ProductsDto> productPrintDtos = productsService.toDTO(products);
+        model.addAttribute("products", productPrintDtos);
+    }
+
+    @GetMapping("/get/{id}")
+    public String getProduct(@PathVariable UUID id, Model model){
+        Products products = productsService.get(id);
+        ProductsDto productDto = productsService.toDTO(products);
+        model.addAttribute("product", productDto);
+        return "products-info";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable UUID id, Model model){
+        try {
+            productsService.delete(id);
+        } catch (EntityNoExist e) {
+            e.printStackTrace();
+            model.addAttribute("error", e.getMessage());
+            return "error";
         }
+        fillModelForMainPage(model);
+        return "products-main";
+    }
+
+    @GetMapping("/update")
+    public String updateProduct(Model model){
+        return getProducts(model);
+    }
+
+    @GetMapping("/update/{id}")
+    public String updateProduct(@PathVariable UUID id, Model model){
+        ProductsDto productsDto = productsService.toDTO(productsService.get(id));
+        List<ManufacturersDto> manufacturers = manufacturersService.toDto(manufacturersService.getAll());
+        model.addAttribute("product", productsDto);
+        model.addAttribute("manufacturers", manufacturers);
+        return "products-update";
+    }
+
+    @PostMapping(value = "/update")
+    public String updateProduct(@RequestParam Map<String, String> inputValue, Model model){
+        ObjectMapper mapper = new ObjectMapper();
+        ProductsDto map = mapper.convertValue(inputValue, ProductsDto.class);
+        Products products = productsService.toEntity(map, manufacturersService.get(map.getManufacturerId()));
+        try {
+            productsService.update(products);
+        } catch (EntityNoExist e) {
+            e.printStackTrace();
+            model.addAttribute("error", e.getMessage());
+            return "error";
+        }
+        return getProduct(map.getId(), model);
+    }
+
+    @GetMapping(value = "/save")
+    public String saveProduct(Model model){
+        model.addAttribute("manufacturers", manufacturersService.getAll());
+        return "products-insert";
+    }
+
+    @PostMapping(value = "/save")
+    public String saveProduct(@RequestParam Map<String, String> inputValue, Model model){
+        ObjectMapper mapper = new ObjectMapper();
+        ProductsDto productsDto = mapper.convertValue(inputValue, ProductsDto.class);
+        Products products = productsService.toEntity(productsDto, manufacturersService.get(productsDto.getManufacturerId()));
+        Products save = null;
+        try {
+            save = productsService.save(products);
+        } catch (EntityWithDuplicateData e) {
+            e.printStackTrace();
+            model.addAttribute("error", e.getMessage());
+            return "error";
+        }
+        return getProduct(save.getId(), model);
     }
 }

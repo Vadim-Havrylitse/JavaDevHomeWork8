@@ -1,10 +1,10 @@
-package com.example.JavaDevHomeWork8.user;
+package com.example.JavaDevHomeWork8.user.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -17,15 +17,15 @@ import java.util.UUID;
 @Builder
 public class User {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", updatable = false,nullable = false)
+    @GeneratedValue
+    @Type(type = "uuid-char")
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
+    @Column(name = "username", nullable = false, unique = true)
     private String email;
     private String password;
     private String firstName;
     private String lastName;
-
     @Enumerated(EnumType.STRING)
-    private Role roles;
+    private Role role;
 }

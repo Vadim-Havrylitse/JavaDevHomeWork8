@@ -3,7 +3,6 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
     <title>Document</title>
 </head>
@@ -55,15 +54,39 @@
                     <a class="nav-link"></a>
                 </li>
             </ul>
-            <form class="nav-item" th:action="@{/logout}" method="get">
+            <form class="nav-item" action="/logout" method="get">
                 <button class="btn btn-primary" type="submit">Sing out</button>
             </form>
         </div>
     </div>
 </nav>
-    <h5 th:text="${label}">Some text</h5>
-    <a href="/products">PRODUCTS</a>
-    <a href="/manufacturers">MANUFACTURERS</a>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+<br>
+<div class="container-xxl" align="center" style="width: 40rem;">
+    <h3>Registration</h3>
+    <div class="card" align="center" >
+        <form method="post" action="/user/save">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">User first name:</span>
+                <input type="text" class="form-control" name="firstName" required="required" aria-describedby="basic-addon3">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon2">User last name:</span>
+                <input type="text" class="form-control" name="lastName" required="required" aria-describedby="basic-addon3">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon3">User password:</span>
+                <input type="password" class="form-control" name="password" required="required" aria-describedby="basic-addon3">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon5">User email:</span>
+                <input type="email" class="form-control" name="email" required="required" aria-describedby="basic-addon3">
+            </div>
+            <input hidden="hidden" name="role" value="USER">
+            <button class="btn btn-primary" type="submit">Do registration</button>
+            <button class="btn btn-primary" onclick="history.back()">Go Back</button>
+        </form>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
 </body>
 </html>

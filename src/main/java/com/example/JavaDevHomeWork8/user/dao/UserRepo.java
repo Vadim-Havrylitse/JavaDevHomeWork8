@@ -1,5 +1,6 @@
-package com.example.JavaDevHomeWork8.user;
+package com.example.JavaDevHomeWork8.user.dao;
 
+import com.example.JavaDevHomeWork8.user.entity.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
