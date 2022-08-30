@@ -1,4 +1,4 @@
-package com.example.JavaDevHomeWork8.controller;
+package com.example.JavaDevHomeWork8.maincontroller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
