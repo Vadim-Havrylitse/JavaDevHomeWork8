@@ -38,9 +38,11 @@ FLYWAY, HIBERNATE, THYMELEAF,
 BOOTSTRAP, MAVEN, TOMCAT,
 POSTMAN, GIT, AWS, HEROKU
 
-## INSTRUCTION FOT LOCAL INSTANCE:
+## INSTRUCTION FOR LOCAL INSTANCE:
 
 <li>Clone repository from GitHub.
 <li>In file 'system.property' add url, username and password for connect to your DB.</li>
 <li>In file 'system.property' set custom server port or delete row 'server.port' and use default port in your computer.</li>
 <li>That's all — press "Run".
+
+
