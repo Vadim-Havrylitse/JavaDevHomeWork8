@@ -6,6 +6,7 @@ import com.example.JavaDevHomeWork8.user.dto.UserRequestDto;
 import com.example.JavaDevHomeWork8.user.entity.Role;
 import com.example.JavaDevHomeWork8.user.entity.User;
 import com.example.JavaDevHomeWork8.util.err.EntityNoExist;
+import com.example.JavaDevHomeWork8.util.err.InvalidEmail;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -81,10 +82,15 @@ public class UserController {
     @SneakyThrows
     @PostMapping("/save")
     public String saveUser(@RequestParam Map<String, String> inputValue, Model model) {
-        ObjectMapper mapper = new ObjectMapper();
-        UserRequestDto userRequestDto = mapper.convertValue(inputValue, UserRequestDto.class);
-        User user = userService.toEntity(userRequestDto);
-        userService.save(user);
-        return getUsers(model);
+        if(userService.isEmailValid(inputValue.get("email"))){
+            ObjectMapper mapper = new ObjectMapper();
+            UserRequestDto userRequestDto = mapper.convertValue(inputValue, UserRequestDto.class);
+            User user = userService.toEntity(userRequestDto);
+            userService.save(user);
+            return getUsers(model);
+        } else{
+            model.addAttribute("error", new InvalidEmail().getMessage());
+            return "error";
+        }
     }
 }
