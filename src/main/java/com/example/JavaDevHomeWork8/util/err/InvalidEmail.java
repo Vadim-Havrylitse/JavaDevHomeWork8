@@ -7,6 +7,6 @@ public class InvalidEmail extends Exception{
     }
 
     public InvalidEmail() {
-        super("Your email address is invalid. Check it all.");
+        super("Your email address is invalid. Check it.");
     }
 }
